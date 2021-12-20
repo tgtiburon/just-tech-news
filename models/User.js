@@ -2,10 +2,16 @@ const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection');
 // load the password hash bcrypt
 const bcrypt = require('bcrypt');
+const { long } = require('webidl-conversions');
 
 // create our User model
 // using extends so User inherits all Models functionality
-class User extends Model {}
+class User extends Model {
+    // set up method to run an instance data (per user) to check password
+    checkPassword(loginPw) {
+        return bcrypt.compareSync(loginPw, this.password);
+    }
+}
 
 
 // define table columns and configuration
