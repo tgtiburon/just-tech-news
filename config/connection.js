@@ -1,7 +1,7 @@
 // import the Sequelize Constructor from the library
 //const Sequelize = require('sequelize');
 
-const { Sequelize } = require('../../../../Downloads/13.1/config/connection');
+const Sequelize = require('sequelize');
 
 let sequelize;
 
