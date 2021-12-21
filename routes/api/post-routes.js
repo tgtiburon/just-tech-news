@@ -1,13 +1,21 @@
 const router = require('express').Router();
+// we need sequelize to show updated post information when we upvote
+const sequelize = require('../../config/connection');
 
-const { Post, User } = require('../../models');
+const { Post, User, Vote } = require('../../models');
 
 // get all users
 router.get('/', (req, res) => {
     console.log('================');
     Post.findAll({
         //Query configuration
-        attributes: ['id', 'post_url', 'title', 'created_at'],
+        attributes: [
+            'id', 
+            'post_url', 
+            'title', 
+            'created_at',
+            [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']
+        ],
         order: [['created_at', 'DESC']],
         include: [
             {
@@ -29,7 +37,13 @@ router.get('/:id', (req,res) => {
         where: {
             id:req.params.id
         },
-        attributes: ['id', 'post_url', 'title', 'created_at'],
+        attributes: [
+            'id', 
+            'post_url', 
+            'title', 
+            'created_at',
+            [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']
+        ],
         include: [
             {
                 model: User,
@@ -67,6 +81,54 @@ router.post('/', (req, res) => {
 
 });
 
+// Voting on a post is technically updating a post data
+// so we will use PUT to keep it restful
+// This needs to come before router.put('/:id' or 
+// Express will thing 'upvote' is a valid :id
+// PUT /api/posts/upvote
+
+// TODO: may be an issue
+router.put('/upvote', (req, res) => {
+    // custom static method created in models/Post.js
+    Post.upvote(req.body, { Vote })
+        .then(updatedPostData => res.json(updatedPostData))
+        .catch(err=> {
+            console.log(err);
+            res.status(400).json(err);
+        });
+    // Old way before we created static upvote method in Post.js
+    // Vote.create({
+    //     user_id: req.body.user_id,
+    //     post_id: req.body.post_id
+    // })
+    // .then(() => {
+    //     // then find the post we just voted on
+    //     return Post.findOne({
+    //         where: {
+    //             id: req.body.post_id
+    //         },
+    //         attributes: [
+    //             'id',
+    //             'post_url',
+    //             'title',
+    //             'created_at',
+    //             // use raw MySQL aggregate function query to get count of how many 
+    //             // votes the post has and return it under the name 'vote_count'
+    //             [
+    //                 sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'),
+    //                 'vote_count'
+    //             ]
+    //         ]
+    //     })
+    //     .then(dbPostData => {
+    //         res.json(dbPostData);
+    //     })
+    //    .catch(err => {
+    //     console.log(err);
+    //     res.status(400).json(err); 
+    //     });
+    // });
+});
 
 router.put('/:id', (req,res)=> {
     Post.update(
