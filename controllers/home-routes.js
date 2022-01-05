@@ -5,6 +5,7 @@ const { Post, User, Comment } = require('../models');
 const router = require('express').Router();
 
 router.get('/', (req, res)=> {
+    console.log(req.session);
     Post.findAll({
         attributes: [
             'id',
@@ -43,6 +44,15 @@ router.get('/', (req, res)=> {
         res.status(500).json(err);
     });
    
+});
+router.get('/login', (req, res)=> {
+    // if they are logged in redirect to a homepage if one exists.
+    if (req.session.loggedIn) {
+        res.redirect('/');
+        return;
+    }
+    // no variables need to be passed so only the page name
+    res.render('login');
 });
 
 
