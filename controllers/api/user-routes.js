@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
     User.findAll({
         // we are telling it to exclude the password column
         // you can exclude multiple columns
-       /////// attributes: { exclude: ['password'] }
+       attributes: { exclude: ['password'] }
     })
         .then(dbUserData => res.json(dbUserData))
         .catch(err => {

@@ -9,6 +9,7 @@ Comment.init(
         // columns will go here
         id: {
             type: DataTypes.INTEGER,
+            allowNull: false,
             primaryKey: true,
             autoIncrement: true
 

@@ -40,7 +40,7 @@ router.get('/', (req, res)=> {
     })
     .catch(err => {
         console.log(err);
-        console.log(dbPostData[0]);
+      //  console.log(dbPostData[0]);
         res.status(500).json(err);
     });
    
