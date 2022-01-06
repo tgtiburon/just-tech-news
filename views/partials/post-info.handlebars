@@ -1,0 +1,16 @@
+ <article class="post">
+    <div class='title'>
+        <a href="{{post_url}}" target="_blank">{{title}}</a>
+        <span>({{format_url post_url}})</span> 
+    </div>
+    <div class="meta">
+        <!-- We are not using () to pass arguments so  we can separate 
+           arguments with spaces.  "point" is word, vote_count is how many-->
+        {{vote_count}} {{format_plural "point" vote_count}} by {{user.username}} on
+        <!-- helper function format_date -->
+        {{ format_date created_at}}
+        |
+        <a href="/post/{{id}}">{{comments.length}} {{format_plural "comment" comments.length}} </a>
+    </div>
+</article>
+

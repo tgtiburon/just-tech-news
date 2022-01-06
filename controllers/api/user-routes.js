@@ -1,6 +1,8 @@
 const router = require('express').Router();
 
 const { User, Post, Vote, Comment}= require('../../models');
+// TODO: not sure I need below
+//require('dotenv').config();
 
 
 // GET /api/users
@@ -10,7 +12,7 @@ router.get('/', (req, res) => {
     User.findAll({
         // we are telling it to exclude the password column
         // you can exclude multiple columns
-       /////// attributes: { exclude: ['password'] }
+       attributes: { exclude: ['password'] }
     })
         .then(dbUserData => res.json(dbUserData))
         .catch(err => {
@@ -83,7 +85,18 @@ router.post('/', (req, res) => {
         password: req.body.password
     })
     .then(dbUserData => {
-        res.json(dbUserData)
+        // Give the server easy access to the users id and username
+        // .save callback initiates the creation of the session and then run
+        // the callback after
+        req.session.save(() => {
+            req.session.user_id = dbUserData.id;
+            req.session.username = dbUserData.username;
+            req.session.loggedIn = true;
+
+            res.json(dbUserData)
+
+        });
+        
     })
     .catch(err=> {
         console.log(err);
@@ -113,12 +126,27 @@ router.post('/login', (req, res) => {
             res.status(400).json({ message: 'Incorrect Password!' });
             return;
         }
-        res.json({ user: dbUserData, message: 'You are now logged in!'});
+        req.session.save(() => {
+            // declare session variables
+            req.session.user_id = dbUserData.id;
+            req.session.username = dbUserData.username;
+            req.session.loggedIn = true;
 
+            res.json({ user: dbUserData, message: 'You are now logged in!'});
 
+        });
     });
+});
 
-
+router.post('/logout', (req,res) => {
+    if(req.session.loggedIn) {
+        req.session.destroy(()=> {
+            // 204 means no content.  Successful but does not need to load a new page.
+            res.status(204).end();
+        });
+    } else {
+        res.status(404).end();
+    }
 });
 
 // PUT  /api/users/1
