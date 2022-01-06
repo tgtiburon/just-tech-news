@@ -19,7 +19,8 @@ const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 //TODO: Not sure my SESSION_PW will work  'Super secret secret'
 const sess = {
-    secret: process.env.SESSION_PW,
+   // secret: process.env.SESSION_PW,
+   secret: 'secret',
     cookie: {},
     resave: false,
     saveUnitialized: true,
