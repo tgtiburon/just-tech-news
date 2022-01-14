@@ -19,11 +19,13 @@ router.get('/', (req, res)=> {
                 model: Comment,
                 attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
                 include: {
+                    // user that left the comment
                     model: User,
                     attributes: ['username']
                 }
             },
             {
+                // user who made the post
                 model: User,
                 attributes: ['username']
             }

@@ -2,7 +2,7 @@ const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection');
 // load the password hash bcrypt
 const bcrypt = require('bcrypt');
-const { long } = require('webidl-conversions');
+//const { long } = require('webidl-conversions');
 
 // create our User model
 // using extends so User inherits all Models functionality

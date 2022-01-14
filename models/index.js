@@ -9,7 +9,8 @@ User.hasMany(Post, {
 });
 
 Post.belongsTo(User, {
-    foreignKey: 'user_id',
+    foreignKey: 'user_id'//,
+   // onDelete: 'SET NULL'
 });
 
 // The below two functions allow user and
@@ -22,29 +23,30 @@ Post.belongsTo(User, {
 // because user_id and post_id pairings are unique one person
 // can't vote multiple times for the same post
 // this is called foreign key constraint
-User.belongsToMany(Post, {
-    through: Vote,
-    as: 'voted_posts',
-    foreignKey: 'user_id',
-    onDelete: 'SET NULL'
-});
-
 Post.belongsToMany(User, {
     through: Vote,
     as: 'voted_posts',
-    foreignKey: 'post_id',
-    onDelete: 'SET NULL'   
+    foreignKey: 'post_id'//,
+   // onDelete: 'SET NULL'   
 });
+User.belongsToMany(Post, {
+    through: Vote,
+    as: 'voted_posts',
+    foreignKey: 'user_id'//,
+   // onDelete: 'SET NULL'
+});
+
+
 
 // TO see the total number of votes on a post we need to 
 // directly connect Post and Vote models
 Vote.belongsTo(User, {
-    foreignKey: 'user_id',
-    onDelete: 'SET NULL'
+    foreignKey: 'user_id'//,
+   // onDelete: 'SET NULL'
 });
 Vote.belongsTo(Post, {
-    foreignKey: 'post_id',
-    onDelete: 'SET NULL'
+    foreignKey: 'post_id'//,
+   // onDelete: 'SET NULL'
 });
 User.hasMany(Vote, {
     foreignKey: 'user_id'
@@ -56,20 +58,26 @@ Post.hasMany(Vote, {
 
 // Take care of comment associations
 Comment.belongsTo(User, {
-    foreignKey: 'user_id',
-    onDelete: 'SET NULL'
-});
-Comment.belongsTo(Post, {
-    foreignKey: 'post_id',
-    onDelete: 'SET NULL'
+    foreignKey: 'user_id'//,
+   // onDelete: 'SET NULL'
 });
 User.hasMany(Comment, {
-    foreignKey: 'user_id',
-    onDelete: 'SET NULL'
+    foreignKey: 'user_id'//,
+   // onDelete: 'SET NULL'
 });
+
+
+// POST NEEDS TO COME FIRST OR A CONSTRAINT ERROR
 Post.hasMany(Comment, {
     foreignKey: 'post_id'
 });
+
+
+Comment.belongsTo(Post, {
+    foreignKey: 'post_id'//,
+   // onDelete: 'SET NULL'
+});
+
 
 
 
@@ -77,4 +85,3 @@ module.exports = { User, Post, Vote, Comment};
 
 
 
-// This file imports the User model and exports a User object.
